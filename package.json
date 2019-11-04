@@ -1,0 +1,16 @@
+{
+  "name": "bot-bar",
+  "version": "1.0.0",
+  "description": "bot per sapere la convenzione con imolainformatica",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Giacomo Lorenzo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-telegram-bot-api": "^0.40.0",
+    "telegram-bot-api": "^1.3.3"
+  }
+}
