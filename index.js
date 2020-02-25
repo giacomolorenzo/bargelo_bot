@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 fs = require('fs');
-
+var express = require('express');
+var app = express();
 // URL at which MongoDB service is running
 var url = "mongodb://localhost:27017/newdb";
 
@@ -80,12 +81,12 @@ bot.onText(/\/order (.+)/, (msg, match) => {
 });
 
 
-bot.onText(/\/orderlist/, (msg,match) => {
+bot.onText(/\/orderlist/, (msg, match) => {
   console.log("sono dentro orderlist")
   const chatId = msg.chat.id;
 
 
-  MongoClient.connect(url,{
+  MongoClient.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   }, function (err, db) {
@@ -102,7 +103,7 @@ bot.onText(/\/orderlist/, (msg,match) => {
   });
 
   // send back the matched "whatever" to the chat
- 
+
 });
 
 
@@ -124,4 +125,52 @@ bot.onText(/\/upload/, (msg, match) => {
 
 
   bot.sendMessage(chatId, "Select an event", keyboard1);
+});
+
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+})
+app.post('/orders', function (req, res) {
+  MongoClient.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }, function (err, db) {
+    if (err) throw err;
+    // db pointing to newdb
+
+    var dbase = db.db("newdb"); //here
+    console.log("Switched to " + dbase.databaseName + " database");
+    // document to be inserted
+    var doc = req;
+
+    // insert document to 'users' collection using insertOne
+    dbase.collection("orders").insertOne(doc, function (err, res) {
+      if (err) throw err;
+      console.log("ordine inserito");
+      // close the connection to db when you are done with it
+      db.close();
+    });
+  });
+  res.send(200)
+});
+app.get('/orders', function (req, res) {
+  MongoClient.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("newdb");
+    dbo.collection("orders").find({}).toArray(function (err, result) {
+      if (err) throw err;
+      let resp = JSON.stringify(result);
+      console.log(resp);
+      res.send(resp);
+      console.log(result);
+      db.close();
+    });
+  });
+});
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
 });
