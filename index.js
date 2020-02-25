@@ -50,6 +50,9 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 
 
 
+
+
+
 bot.onText(/\/order (.+)/, (msg, match) => {
   var jsonobj = {
     chatid: "" + msg.chat.id,
@@ -79,7 +82,39 @@ bot.onText(/\/order (.+)/, (msg, match) => {
   const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
   bot.sendMessage(chatId, resp);
 });
+bot.onText(/\/register (.+)/, (msg, match) => {
+  var array = match[1].split(",");
 
+  var jsonobj = {
+    chatid: "" + msg.chat.id,
+    name: array[0],
+    phone_number: array[1],
+    email: array[2]
+  }
+  MongoClient.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }, function (err, db) {
+    if (err) throw err;
+    // db pointing to newdb
+
+    var dbase = db.db("newdb"); //here
+    console.log("Switched to " + dbase.databaseName + " database");
+    // document to be inserted
+    var doc = jsonobj;
+
+    // insert document to 'users' collection using insertOne
+    dbase.collection("users").insertOne(doc, function (err, res) {
+      if (err) throw err;
+      console.log("ordine inserito");
+      // close the connection to db when you are done with it
+      db.close();
+    });
+  });
+  const chatId = msg.chat.id;
+  const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
+  bot.sendMessage(chatId, resp);
+});
 
 bot.onText(/\/orderlist/, (msg, match) => {
   console.log("sono dentro orderlist")
