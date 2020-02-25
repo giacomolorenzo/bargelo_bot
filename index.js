@@ -5,11 +5,12 @@ var app = express();
 // URL at which MongoDB service is running
 var url = "mongodb://localhost:27017/newdb";
 
+
 // A Client to MongoDB
 var MongoClient = require('mongodb').MongoClient;
 
-// make client connect to mongo service
-var MongoClient = require('mongodb').MongoClient;
+var orders = require('./modules/orders.js');
+
 
 // make client connect to mongo service
 MongoClient.connect(url, {
@@ -58,26 +59,9 @@ bot.onText(/\/order (.+)/, (msg, match) => {
     chatid: "" + msg.chat.id,
     message: match[1]
   }
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    // db pointing to newdb
 
-    var dbase = db.db("newdb"); //here
-    console.log("Switched to " + dbase.databaseName + " database");
-    // document to be inserted
-    var doc = jsonobj;
-
-    // insert document to 'users' collection using insertOne
-    dbase.collection("orders").insertOne(doc, function (err, res) {
-      if (err) throw err;
-      console.log("ordine inserito");
-      // close the connection to db when you are done with it
-      db.close();
-    });
-  });
+   orders.insertOrder(jsonobj);
+  
   const chatId = msg.chat.id;
   const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
   bot.sendMessage(chatId, resp);
@@ -91,26 +75,7 @@ bot.onText(/\/register (.+)/, (msg, match) => {
     phone_number: array[1],
     email: array[2]
   }
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    // db pointing to newdb
-
-    var dbase = db.db("newdb"); //here
-    console.log("Switched to " + dbase.databaseName + " database");
-    // document to be inserted
-    var doc = jsonobj;
-
-    // insert document to 'users' collection using insertOne
-    dbase.collection("users").insertOne(doc, function (err, res) {
-      if (err) throw err;
-      console.log("ordine inserito");
-      // close the connection to db when you are done with it
-      db.close();
-    });
-  });
+  insertUser(jsonobj);
   const chatId = msg.chat.id;
   const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
   bot.sendMessage(chatId, resp);
@@ -119,24 +84,7 @@ bot.onText(/\/register (.+)/, (msg, match) => {
 bot.onText(/\/orderlist/, (msg, match) => {
   console.log("sono dentro orderlist")
   const chatId = msg.chat.id;
-
-
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("newdb");
-    dbo.collection("orders").find({}).toArray(function (err, result) {
-      if (err) throw err;
-      let resp = JSON.stringify(result);
-      console.log(resp);
-      bot.sendMessage(chatId, resp);
-      console.log(result);
-      db.close();
-    });
-  });
-
+  listOrder();
   // send back the matched "whatever" to the chat
 
 });
@@ -166,46 +114,37 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 })
 app.post('/orders', function (req, res) {
+  orders.insertOrder(req);
+  res.send(200)
+});
+app.get('/orders', function (req, res) {
+  restListOrder();
+});
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});
+
+
+function insertUser(jsonobj){
   MongoClient.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   }, function (err, db) {
     if (err) throw err;
-    // db pointing to newdb
+
+    var doc = jsonobj;
+    
+    console.log("Switched to " + dbase.databaseName + " database");
 
     var dbase = db.db("newdb"); //here
-    console.log("Switched to " + dbase.databaseName + " database");
-    // document to be inserted
-    var doc = req;
-
     // insert document to 'users' collection using insertOne
-    dbase.collection("orders").insertOne(doc, function (err, res) {
+    dbase.collection("users").insertOne(doc, function (err, res) {
       if (err) throw err;
       console.log("ordine inserito");
       // close the connection to db when you are done with it
       db.close();
     });
   });
-  res.send(200)
-});
-app.get('/orders', function (req, res) {
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("newdb");
-    dbo.collection("orders").find({}).toArray(function (err, result) {
-      if (err) throw err;
-      let resp = JSON.stringify(result);
-      console.log(resp);
-      res.send(resp);
-      console.log(result);
-      db.close();
-    });
-  });
-});
-
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+}
+bot.on("polling_error", (err) => console.log(err));
