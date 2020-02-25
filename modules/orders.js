@@ -1,6 +1,5 @@
 
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/newdb";
 function insertOrder(jsonobj){
     MongoClient.connect(url, {
       useNewUrlParser: true,
@@ -33,11 +32,10 @@ function insertOrder(jsonobj){
       var dbo = db.db("newdb");
       dbo.collection("orders").find({}).toArray(function (err, result) {
         if (err) throw err;
-        let resp = JSON.stringify(result);
+        const resp = JSON.stringify(result)
         console.log(resp);
-        bot.sendMessage(chatId, resp);
-        console.log(result);
         db.close();
+        return resp;
       });
     });
   }

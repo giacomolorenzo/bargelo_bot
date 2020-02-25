@@ -3,13 +3,15 @@ fs = require('fs');
 var express = require('express');
 var app = express();
 // URL at which MongoDB service is running
-var url = "mongodb://localhost:27017/newdb";
+global.url = "mongodb://localhost:27017/newdb";
 
 
 // A Client to MongoDB
 var MongoClient = require('mongodb').MongoClient;
 
 var orders = require('./modules/orders.js');
+
+var users = require('./modules/users');
 
 
 // make client connect to mongo service
@@ -75,7 +77,7 @@ bot.onText(/\/register (.+)/, (msg, match) => {
     phone_number: array[1],
     email: array[2]
   }
-  insertUser(jsonobj);
+  users.insertUser(jsonobj);
   const chatId = msg.chat.id;
   const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
   bot.sendMessage(chatId, resp);
@@ -84,8 +86,8 @@ bot.onText(/\/register (.+)/, (msg, match) => {
 bot.onText(/\/orderlist/, (msg, match) => {
   console.log("sono dentro orderlist")
   const chatId = msg.chat.id;
-  listOrder();
-  // send back the matched "whatever" to the chat
+  var result = orders.listOrder();
+ bot.sendMessage(chatId,result); // send back the matched "whatever" to the chat
 
 });
 
@@ -126,25 +128,5 @@ app.listen(3000, function () {
 });
 
 
-function insertUser(jsonobj){
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
 
-    var doc = jsonobj;
-    
-    console.log("Switched to " + dbase.databaseName + " database");
-
-    var dbase = db.db("newdb"); //here
-    // insert document to 'users' collection using insertOne
-    dbase.collection("users").insertOne(doc, function (err, res) {
-      if (err) throw err;
-      console.log("ordine inserito");
-      // close the connection to db when you are done with it
-      db.close();
-    });
-  });
-}
 bot.on("polling_error", (err) => console.log(err));
