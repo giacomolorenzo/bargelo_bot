@@ -1,5 +1,15 @@
+/* modulo ordini per inserire ordini tramite bot telegram o API rest
 
+
+*/
+//Istanzio mongo client
 var MongoClient = require('mongodb').MongoClient;
+
+
+/*
+Inserimento ordini e salvataggio su mongo
+@param JSONObject
+*/
 function insertOrder(jsonobj){
     MongoClient.connect(url, {
       useNewUrlParser: true,
@@ -23,7 +33,7 @@ function insertOrder(jsonobj){
     });
   }
   
-  function listOrder(){
+  function listOrder(bot,chatId){
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -35,12 +45,12 @@ function insertOrder(jsonobj){
         const resp = JSON.stringify(result)
         console.log(resp);
         db.close();
-        return resp;
+        bot.sendMessage(chatId,resp); 
       });
     });
   }
   
-  function restListOrder(){
+  function restListOrder(res){
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -49,11 +59,10 @@ function insertOrder(jsonobj){
       var dbo = db.db("newdb");
       dbo.collection("orders").find({}).toArray(function (err, result) {
         if (err) throw err;
-        let resp = JSON.stringify(result);
+        const resp = JSON.stringify(result);
         console.log(resp);
-        res.send(resp);
-        console.log(result);
         db.close();
+        res.send(resp);
       });
     });
   }
