@@ -42,7 +42,7 @@ keyboard = [
 bot.onText(/\/echo (.+)/, (msg, match) => {
 
   const chatId = msg.chat.id;
-  const resp = match[1]; 
+  const resp = match[1];
   bot.sendMessage(chatId, resp);
 });
 
@@ -56,11 +56,16 @@ bot.onText(/\/order (.+)/, (msg, match) => {
     chatid: "" + msg.chat.id,
     message: match[1]
   }
+  try {
+    orders.insertOrder(jsonobj, MongoClient);
+  } catch (e) {
+    console.log("Error", e.stack);
+    console.log("Error", e.name);
+    console.log("Error", e.message);
+  }
 
-   orders.insertOrder(jsonobj);
-  
   const chatId = msg.chat.id;
-  const resp = "L'ordine è stato ricevuto"; 
+  const resp = "L'ordine è stato ricevuto";
   bot.sendMessage(chatId, resp);
 });
 bot.onText(/\/register (.+)/, (msg, match) => {
@@ -72,7 +77,13 @@ bot.onText(/\/register (.+)/, (msg, match) => {
     phone_number: array[1],
     email: array[2]
   }
-  users.insertUser(jsonobj);
+  try {
+    users.insertUser(jsonobj);
+  } catch (e) {
+    console.log("Error", e.stack);
+    console.log("Error", e.name);
+    console.log("Error", e.message);
+  }
   const chatId = msg.chat.id;
   const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
   bot.sendMessage(chatId, resp);
@@ -81,8 +92,13 @@ bot.onText(/\/register (.+)/, (msg, match) => {
 bot.onText(/\/orderlist/, (msg, match) => {
   console.log("sono dentro orderlist")
   const chatId = msg.chat.id;
-  var result = orders.listOrder(bot,chatId);
- // send back the matched "whatever" to the chat
+  try {
+    orders.listOrder(bot, chatId, MongoClient);
+  } catch (e) {
+    console.log("Error", e.stack);
+    console.log("Error", e.name);
+    console.log("Error", e.message);
+  }
 
 });
 
@@ -111,19 +127,18 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 })
 app.post('/orders', function (req, res) {
-  orders.insertOrder(req);
+  orders.insertOrder(req, MongoClient);
   res.send(200)
 });
 app.get('/orders', function (req, res) {
-  let response = '';
+
   try {
-   response = orders.restListOrder(res);
-}
-catch (e) {
+    orders.restListOrder(res, MongoClient);
+  } catch (e) {
     console.log("Error", e.stack);
     console.log("Error", e.name);
     console.log("Error", e.message);
-}
+  }
 
 });
 
