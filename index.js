@@ -31,7 +31,7 @@ MongoClient.connect(url, {
 //place the value below with the Telegram token you receive from @BotFather
 const token = '906197363:AAFv_gl9CCZ0b-_oQEiZe_OPVHLPLuqp6sw';
 
-// Create a bot that uses 'polling' to fetch new updates
+//bot declarations
 const bot = new TelegramBot(token, {
   polling: true
 });
@@ -40,14 +40,9 @@ keyboard = [
 ];
 // Matches "/echo [whatever]"
 bot.onText(/\/echo (.+)/, (msg, match) => {
-  // 'msg' is the received Message from Telegram
-  // 'match' is the result of executing the regexp above on the text content
-  // of the message
 
   const chatId = msg.chat.id;
-  const resp = match[1]; // the captured "whatever"
-
-  // send back the matched "whatever" to the chat
+  const resp = match[1]; 
   bot.sendMessage(chatId, resp);
 });
 
@@ -65,7 +60,7 @@ bot.onText(/\/order (.+)/, (msg, match) => {
    orders.insertOrder(jsonobj);
   
   const chatId = msg.chat.id;
-  const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
+  const resp = "L'ordine è stato ricevuto"; 
   bot.sendMessage(chatId, resp);
 });
 bot.onText(/\/register (.+)/, (msg, match) => {
@@ -86,8 +81,8 @@ bot.onText(/\/register (.+)/, (msg, match) => {
 bot.onText(/\/orderlist/, (msg, match) => {
   console.log("sono dentro orderlist")
   const chatId = msg.chat.id;
-  var result = orders.listOrder();
- bot.sendMessage(chatId,result); // send back the matched "whatever" to the chat
+  var result = orders.listOrder(bot,chatId);
+ // send back the matched "whatever" to the chat
 
 });
 
@@ -120,7 +115,16 @@ app.post('/orders', function (req, res) {
   res.send(200)
 });
 app.get('/orders', function (req, res) {
-  restListOrder();
+  let response = '';
+  try {
+   response = orders.restListOrder(res);
+}
+catch (e) {
+    console.log("Error", e.stack);
+    console.log("Error", e.name);
+    console.log("Error", e.message);
+}
+
 });
 
 app.listen(3000, function () {
