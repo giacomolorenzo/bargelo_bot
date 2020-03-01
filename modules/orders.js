@@ -3,14 +3,15 @@
 
 */
 //Istanzio mongo client
-var MongoClient = require('mongodb').MongoClient;
+
+
 
 
 /*
 Inserimento ordini e salvataggio su mongo
 @param JSONObject
 */
-function insertOrder(jsonobj){
+function insertOrder(jsonobj,MongoClient){
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -32,8 +33,11 @@ function insertOrder(jsonobj){
       });
     });
   }
-  
-  function listOrder(bot,chatId){
+  /*Lista degli ordini
+  @param bot (classe bot che permette i messaggi su telegram)
+  @param chatId (corrisponde al valore del Id chat di telegram)
+  */
+  function listOrder(bot,chatId,MongoClient){
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -50,7 +54,7 @@ function insertOrder(jsonobj){
     });
   }
   
-  function restListOrder(res){
+  function restListOrder(res,MongoClient){
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
