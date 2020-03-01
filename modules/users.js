@@ -1,3 +1,5 @@
+
+var MongoClient = require('mongodb').MongoClient;
 function insertUser(jsonobj){
     MongoClient.connect(url, {
       useNewUrlParser: true,
@@ -13,7 +15,7 @@ function insertUser(jsonobj){
       // insert document to 'users' collection using insertOne
       dbase.collection("users").insertOne(doc, function (err, res) {
         if (err) throw err;
-        console.log("ordine inserito");
+        console.log("Utente inserito");
         // close the connection to db when you are done with it
         db.close();
       });
