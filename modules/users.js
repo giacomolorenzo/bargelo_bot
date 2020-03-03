@@ -6,14 +6,11 @@ function insertUser(jsonobj,MongoClient,bot){
       useUnifiedTopology: true
     }, function (err, db) {
       if (err) throw err;
-      
-      var doc = jsonobj;
-      
-      console.log("Switched to " + dbase.databaseName + " database");
   
       var dbase = db.db("newdb"); //here
+      console.log("Switched to " + dbase.databaseName + " database");
       // insert document to 'users' collection using insertOne
-      dbase.collection("users").insertOne(doc, function (err, res) {
+      dbase.collection("users").insertOne(jsonobj, function (err, res) {
         if (err) throw err;
         console.log("Utente inserito");
         // close the connection to db when you are done with it
