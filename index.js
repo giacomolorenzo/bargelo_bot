@@ -69,16 +69,17 @@ bot.onText(/\/order (.+)/, (msg, match) => {
   bot.sendMessage(chatId, resp);
 });
 bot.onText(/\/register (.+)/, (msg, match) => {
-  var array = match[1].split(",");
-
+  var array = match[1].split("-");
+  if(array.length < 2 ){
+    bot.sendMessage(chatId, "Inserisci correttamente i dati rispettando la sistassi example:Giacomo-123456970");
+  }else{
   var jsonobj = {
     chatid: "" + msg.chat.id,
     name: array[0],
-    phone_number: array[1],
-    email: array[2]
+    phone_number: array[1]
   }
   try {
-    users.insertUser(jsonobj);
+    users.insertUser(jsonobj,MongoClient);
   } catch (e) {
     console.log("Error", e.stack);
     console.log("Error", e.name);
@@ -86,7 +87,9 @@ bot.onText(/\/register (.+)/, (msg, match) => {
   }
   const chatId = msg.chat.id;
   const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
-  bot.sendMessage(chatId, resp);
+  
+
+}
 });
 
 bot.onText(/\/orderlist/, (msg, match) => {
@@ -103,24 +106,8 @@ bot.onText(/\/orderlist/, (msg, match) => {
 });
 
 
-bot.onText(/\/upload/, (msg, match) => {
-
-  const chatId = msg.chat.id;
-  const resp = match[1]; // the captured "whatever"
-  var keyboard1 = {
-    parse_mode: "Markdown",
-    reply_markup: {
-      resize_keyboard: true,
-      'one_time_keyboard': true,
-      "keyboard": [
-        ["Upload"],
-        ["Back"]
-      ]
-    }
-  };
-
-
-  bot.sendMessage(chatId, "Select an event", keyboard1);
+bot.onText(/\/menu/, (msg, match) => {
+  bot.sendPhoto(msg.chat.id, 'images/pasto.jpeg')
 });
 
 app.get('/', function (req, res) {
@@ -140,6 +127,11 @@ app.get('/orders', function (req, res) {
     console.log("Error", e.message);
   }
 
+});
+
+app.post('/sendmessage', function (req, res) {
+bot.sendMessage(req.chatid, req.message)
+res.send(200);
 });
 
 app.listen(3000, function () {
