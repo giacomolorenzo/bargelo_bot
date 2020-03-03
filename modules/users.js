@@ -1,12 +1,12 @@
 
-var MongoClient = require('mongodb').MongoClient;
-function insertUser(jsonobj){
+
+function insertUser(jsonobj,MongoClient,bot){
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     }, function (err, db) {
       if (err) throw err;
-  
+      
       var doc = jsonobj;
       
       console.log("Switched to " + dbase.databaseName + " database");
