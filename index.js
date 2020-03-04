@@ -5,6 +5,7 @@ var app = express();
 // URL at which MongoDB service is running
 global.url = "mongodb://localhost:27017/newdb";
 
+  
 
 // A Client to MongoDB
 var MongoClient = require('mongodb').MongoClient;
@@ -46,11 +47,6 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
   bot.sendMessage(chatId, resp);
 });
 
-
-
-
-
-
 bot.onText(/\/order (.+)/, (msg, match) => {
   var jsonobj = {
     chatid: "" + msg.chat.id,
@@ -86,10 +82,35 @@ bot.onText(/\/register (.+)/, (msg, match) => {
     console.log("Error", e.message);
   }
   const chatId = msg.chat.id;
-  const resp = "L'ordine è stato ricevuto"; // the captured "whatever"
-  
+  const resp = "L'utente è stato inserito"; // the captured "whatever"
+  bot.sendMessage(chatId,resp)
 
 }
+});
+
+bot.onText(/\/start/, (msg, match) => {
+  siteUrl = match[1];
+  bot.sendMessage(msg.chat.id,'Vuoi registrarti per ordinare il pranzo?', {
+    reply_markup: {
+      inline_keyboard: [[
+        {
+          text: 'Registrati',
+          callback_data: 'register',
+          command: 'register'
+          
+        }
+      ]]
+    }
+  });
+});
+
+bot.on("callback_query", (callbackQuery) => {
+  const data = callbackQuery.data;
+  const message = callbackQuery.message;
+      if(data === "register"){
+        bot.sendMessage(message.chat.id,'Inserisci il tuo nome ed il numero di telefono separato da una virgola example: /register Giacomo,3897968526')
+      }
+
 });
 
 bot.onText(/\/orderlist/, (msg, match) => {
