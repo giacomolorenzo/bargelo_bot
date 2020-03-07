@@ -131,9 +131,7 @@ bot.onText(/\/menu/, (msg, match) => {
   bot.sendPhoto(msg.chat.id, 'images/pasto.jpeg')
 });
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-})
+app.use('/', express.static(__dirname + '//htmlGiacomo'));
 app.post('/orders', function (req, res) {
   orders.insertOrder(req, MongoClient);
   res.send(200)
