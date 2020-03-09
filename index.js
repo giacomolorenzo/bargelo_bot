@@ -48,21 +48,29 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 });
 
 bot.onText(/\/order (.+)/, (msg, match) => {
-  var jsonobj = {
-    chatid: "" + msg.chat.id,
-    message: match[1]
-  }
-  try {
-    orders.insertOrder(jsonobj, MongoClient);
-  } catch (e) {
-    console.log("Error", e.stack);
-    console.log("Error", e.name);
-    console.log("Error", e.message);
-  }
+   const userOrder = users.findUserByChatid(msg.chat.id,MongoClient);
 
-  const chatId = msg.chat.id;
-  const resp = "L'ordine è stato ricevuto";
-  bot.sendMessage(chatId, resp);
+   if(userOrder != "" || userOrder != undefined){
+    var jsonobj = {
+      chatid: "" + msg.chat.id,
+      message: match[1]
+    }
+    try {
+      orders.insertOrder(jsonobj, MongoClient);
+    } catch (e) {
+      console.log("Error", e.stack);
+      console.log("Error", e.name);
+      console.log("Error", e.message);
+    }
+  
+    const chatId = msg.chat.id;
+    const resp = "L'ordine è stato ricevuto";
+    bot.sendMessage(chatId, resp);
+   }else{
+     bot.sendMessage(msg.chat.id, "Devi prima registrarti per poter ordinare qualcosa!");
+   }
+
+  
 });
 bot.onText(/\/register (.+)/, (msg, match) => {
   var array = match[1].split("-");
@@ -131,7 +139,7 @@ bot.onText(/\/menu/, (msg, match) => {
   bot.sendPhoto(msg.chat.id, 'images/pasto.jpeg')
 });
 
-app.use('/', express.static(__dirname + '//htmlGiacomo'));
+app.use('/', express.static(__dirname + '/statichtml'));
 app.post('/orders', function (req, res) {
   orders.insertOrder(req, MongoClient);
   res.send(200)
