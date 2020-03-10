@@ -40,6 +40,6 @@ function insertUser(jsonobj,MongoClient,bot){
         });
         
       });
-    });
+
   }
   module.exports = { insertUser,findUserByChatid};
