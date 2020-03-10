@@ -48,27 +48,33 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 });
 
 bot.onText(/\/order (.+)/, (msg, match) => {
-   const userOrder = users.findUserByChatid(msg.chat.id,MongoClient);
-
-   if(userOrder != "" || userOrder != undefined){
-    var jsonobj = {
-      chatid: "" + msg.chat.id,
-      message: match[1]
-    }
-    try {
-      orders.insertOrder(jsonobj, MongoClient);
-    } catch (e) {
-      console.log("Error", e.stack);
-      console.log("Error", e.name);
-      console.log("Error", e.message);
-    }
   
-    const chatId = msg.chat.id;
-    const resp = "L'ordine è stato ricevuto";
-    bot.sendMessage(chatId, resp);
-   }else{
-     bot.sendMessage(msg.chat.id, "Devi prima registrarti per poter ordinare qualcosa!");
-   }
+    users.findUserByChatid(msg.chat.id,MongoClient).then(cbresult =>{
+      const result = cbresult[0];
+      console.log()
+       let jsonobj = {
+         chatid: "" + msg.chat.id,
+         message: match[1],
+         user: result.name,
+         phone: result.phone_number
+       }
+       console.log("Debug Ordine: "+JSON.stringify(jsonobj));
+       try {
+         orders.insertOrder(jsonobj, MongoClient);
+       } catch (e) {
+         console.log("Error", e.stack);
+         console.log("Error", e.name);
+         console.log("Error", e.message);
+       }
+     
+       const chatId = msg.chat.id;
+       const resp = "L'ordine è stato ricevuto";
+       bot.sendMessage(chatId, resp);
+      
+   
+    }).catch(error =>{
+      console.log(error);
+    })
 
   
 });

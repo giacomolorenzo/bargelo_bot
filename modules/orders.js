@@ -11,7 +11,7 @@ Inserimento ordini e salvataggio su mongo
 @param JSONObject
 */
 function insertOrder(jsonobj,MongoClient){
-
+    console.log("Debug insertOrder: "+ JSON.stringify(jsonobj));
     MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true

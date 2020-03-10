@@ -19,8 +19,8 @@ function insertUser(jsonobj,MongoClient,bot){
     });
   }  
 
-  function findUserByChatid(chatId,MongoClient){
-    MongoClient.connect(url, {
+  async function findUserByChatid(chatId,MongoClient){
+    return promise = new Promise(function(resolve, reject){MongoClient.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     }, function (err, db) {
@@ -32,14 +32,17 @@ function insertUser(jsonobj,MongoClient,bot){
         if (err) throw err;
         db.close();
         const resultResponse = result;
-        if(result != undefined || result.length != 0 ){
-          return resultResponse;
+        console.log("User debug: "+ JSON.stringify(resultResponse))
+        if(resultResponse != undefined || resultResponse.length != 0 ){
+          console.log("debug return user filled!")
+          resolve( resultResponse);
         } else {
-          return "";
+          reject ("");
         }
         });
         
       });
+    });
 
   }
-  module.exports = { insertUser,findUserByChatid};
+  module.exports = { insertUser,findUserByChatid };
