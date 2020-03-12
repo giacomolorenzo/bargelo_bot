@@ -50,13 +50,21 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 bot.onText(/\/order (.+)/, (msg, match) => {
   
     users.findUserByChatid(msg.chat.id,MongoClient).then(cbresult =>{
+      console.log("Debug callback1")
+      orders.findOrdernumber(msg.chat.id,MongoClient).then(cbfind=>{
+        console.log("Callback2 "+cbfind);
       const result = cbresult[0];
-      console.log()
+      const findOrdernumber = cbfind;
+      console.log("Debug callback2 "+findOrdernumber)
        let jsonobj = {
          chatid: "" + msg.chat.id,
          message: match[1],
          user: result.name,
-         phone: result.phone_number
+         phone: result.phone_number,
+         order_status: null,
+         prezzo: 7.0,
+         ordernumber: findOrdernumber,
+         date: new Date()
        }
        console.log("Debug Ordine: "+JSON.stringify(jsonobj));
        try {
@@ -75,7 +83,9 @@ bot.onText(/\/order (.+)/, (msg, match) => {
     }).catch(error =>{
       console.log(error);
     })
-
+  }).catch(error => {
+    console.log(error);
+  })
   
 });
 bot.onText(/\/register (.+)/, (msg, match) => {
