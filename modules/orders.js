@@ -90,8 +90,8 @@ async function findOrdernumber(chatid, MongoClient) {
         db.close();
         const resultResponse = result;
         console.log("Debug findOrdernumber "+ resultResponse);
-        if (result != undefined && result != null) {
-          
+        if (resultResponse != undefined && resultResponse != null && resultResponse != "") {
+          console.log("order if")
           resolve(parseInt(resultResponse[0].ordernumber) + 1);
         } else {
           resolve(0);

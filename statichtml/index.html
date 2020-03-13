@@ -12,7 +12,7 @@
     <title>Recensione Captain Marvel</title>
 
     <style>
-
+      
       .oswald { font-family: 'Oswald', 'Arial', 'Comic Sans', sans-serif; }     
     </style>
 
@@ -20,8 +20,23 @@
   <body>	
   
   <div class="container">
-
-    
+    <div class='form-row'>
+    <div class='form-group col mt-2'>
+      <label for='telefono' class='font-weight-bold'>Nome</label>  
+    </div>
+    <div class='form-group col mt-2'>
+      <label for='telefono' class='font-weight-bold'>Telefono</label>  
+    </div>
+    <div class='form-group col mt-2'>
+      <label for='telefono' class='font-weight-bold'>Ordine</label>  
+    </div>
+    <div class='form-group col mt-2'>
+      <label for='telefono' class='font-weight-bold'>Stato</label>  
+    </div>
+    <div class='form-group col mt-2'>
+      <label for='telefono' class='font-weight-bold'>Prezzo</label>  
+    </div>
+  </div>
         
         <div>
             <button type="button" id="upload" class="btn btn-primary" name="" value="Carica Menu">Carica Menu</button>         
@@ -64,7 +79,7 @@
     <script>
       
       $(document).ready(function(){
-
+        
         $("#upload").click(function(){
             $('#myModal').show();
         });
