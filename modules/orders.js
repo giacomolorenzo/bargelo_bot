@@ -34,9 +34,9 @@ function insertOrder(jsonobj, MongoClient) {
     });
   });
 }
-/*Lista degli ordini
-@param bot (classe bot che permette i messaggi su telegram)
-@param chatId (corrisponde al valore del Id chat di telegram)
+/*Order List
+@param bot (telegram bot object to send response messages)
+@param chatId (telegram chatId)
 */
 function listOrder(bot, chatId, MongoClient) {
   MongoClient.connect(url, {
@@ -59,7 +59,10 @@ function listOrder(bot, chatId, MongoClient) {
     });
   });
 }
-
+/*Rest Order List called by /orders
+@param bot (telegram bot object to send response messages)
+@param chatId (telegram chatId)
+*/
 function restListOrder(res, MongoClient) {
   MongoClient.connect(url, {
     useNewUrlParser: true,
@@ -76,7 +79,10 @@ function restListOrder(res, MongoClient) {
     });
   });
 }
-
+/* Order List by chatid called by /orders
+@param bot (telegram bot object to send response messages)
+@param chatId (telegram chatId)
+*/
 async function findOrdernumber(chatid, MongoClient) {
   return promise = new Promise(function (resolve, reject) {
     MongoClient.connect(url, {

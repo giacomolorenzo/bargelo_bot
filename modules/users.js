@@ -1,5 +1,9 @@
 
-
+/*
+Insert User
+@param jsonobject(json to insert inside the users collection)
+@param MongoClient client to duplicate istance of mongodb
+*/
 function insertUser(jsonobj,MongoClient,bot){
     MongoClient.connect(url, {
       useNewUrlParser: true,
@@ -18,7 +22,12 @@ function insertUser(jsonobj,MongoClient,bot){
       });
     });
   }  
-
+/*
+FindUserByChatId
+Function to find a user from telegram chatid
+@param chatid(telegram)
+@param MongoClient client to duplicate istance of mongodb
+*/
   async function findUserByChatid(chatId,MongoClient){
     return promise = new Promise(function(resolve, reject){MongoClient.connect(url, {
       useNewUrlParser: true,

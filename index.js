@@ -9,9 +9,9 @@ global.url = "mongodb://localhost:27017/newdb";
 
 // A Client to MongoDB
 var MongoClient = require('mongodb').MongoClient;
-
+// order modules
 var orders = require('./modules/orders.js');
-
+// user modules
 var users = require('./modules/users');
 
 
@@ -30,15 +30,13 @@ MongoClient.connect(url, {
 });
 
 //place the value below with the Telegram token you receive from @BotFather
-const token = '906197363:AAFv_gl9CCZ0b-_oQEiZe_OPVHLPLuqp6sw';
+const token = '< insert your key >'; //don't worry the key is not valid
 
 //bot declarations
 const bot = new TelegramBot(token, {
   polling: true
 });
-keyboard = [
-  ['Carica il tuo menu']
-];
+
 // Matches "/echo [whatever]"
 bot.onText(/\/echo (.+)/, (msg, match) => {
 
@@ -46,7 +44,7 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
   const resp = match[1];
   bot.sendMessage(chatId, resp);
 });
-
+// insert order in mongodb
 bot.onText(/\/order (.+)/, (msg, match) => {
   
     users.findUserByChatid(msg.chat.id,MongoClient).then(cbresult =>{
@@ -88,6 +86,7 @@ bot.onText(/\/order (.+)/, (msg, match) => {
   })
   
 });
+//Register user inside the collection user
 bot.onText(/\/register (.+)/, (msg, match) => {
   var array = match[1].split("-");
   if(array.length < 2 ){
