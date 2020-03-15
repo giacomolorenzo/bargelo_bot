@@ -30,7 +30,7 @@ MongoClient.connect(url, {
 });
 
 //place the value below with the Telegram token you receive from @BotFather
-const token = '< insert your key >'; //don't worry the key is not valid
+const token = '<insert your key>'; //don't worry the key is not valid
 
 //bot declarations
 const bot = new TelegramBot(token, {
@@ -159,6 +159,12 @@ app.post('/orders', function (req, res) {
   orders.insertOrder(req, MongoClient);
   res.send(200)
 });
+app.put('/orders', function (req, res) {
+  const mongoid = req._id;
+  orders.updateOrder(req,mongoid, MongoClient);
+  res.send(200)
+});
+
 app.get('/orders', function (req, res) {
 
   try {
@@ -176,7 +182,7 @@ bot.sendMessage(req.chatid, req.message)
 res.send(200);
 });
 
-app.listen(3000, function () {
+app.listen(5000, function () {
   console.log('Example app listening on port 3000!');
 });
 

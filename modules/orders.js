@@ -34,6 +34,31 @@ function insertOrder(jsonobj, MongoClient) {
     });
   });
 }
+
+function updateOrder(jsonobj,mongoid, MongoClient) {
+  console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
+  MongoClient.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }, function (err, db) {
+    if (err) throw err;
+    // db pointing to newdb
+
+    var dbase = db.db("newdb"); //here
+    console.log("Switched to " + dbase.databaseName + " database");
+    // find order number for single user 
+
+    var doc = jsonobj;
+
+    // insert document to 'users' collection using insertOne
+    dbase.collection("orders").update({_id: mongoid},doc, function (err, res) {
+      if (err) throw err;
+      console.log("ordine Aggiornato");
+      // close the connection to db when you are done with it
+      db.close();
+    });
+  });
+}
 /*Order List
 @param bot (telegram bot object to send response messages)
 @param chatId (telegram chatId)
@@ -75,6 +100,8 @@ function restListOrder(res, MongoClient) {
       const resp = JSON.stringify(result);
       console.log(resp);
       db.close();
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       res.send(resp);
     });
   });
@@ -108,4 +135,4 @@ async function findOrdernumber(chatid, MongoClient) {
   });
 }
 
-module.exports = {  insertOrder,  listOrder,  restListOrder,  findOrdernumber};
+module.exports = {  insertOrder, updateOrder, listOrder,  restListOrder,  findOrdernumber};
