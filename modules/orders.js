@@ -35,7 +35,7 @@ function insertOrder(jsonobj, MongoClient) {
   });
 }
 
-function updateOrder(jsonobj,mongoid, MongoClient) {
+function updateOrder(jsonobj,mongoid, MongoClient,resRest) {
   console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
   MongoClient.connect(url, {
     useNewUrlParser: true,
@@ -53,9 +53,10 @@ function updateOrder(jsonobj,mongoid, MongoClient) {
     // insert document to 'users' collection using insertOne
     dbase.collection("orders").update({_id: mongoid},doc, function (err, res) {
       if (err) throw err;
-      console.log("ordine Aggiornato");
+      console.log("ordine Aggiornato "+ res);
       // close the connection to db when you are done with it
       db.close();
+      resRest.send(JSON.stringify(jsonobj));
     });
   });
 }
