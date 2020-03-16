@@ -2,6 +2,8 @@ const TelegramBot = require('node-telegram-bot-api');
 fs = require('fs');
 var express = require('express');
 var app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 // URL at which MongoDB service is running
 global.url = "mongodb://localhost:27017/newdb";
 
@@ -30,7 +32,7 @@ MongoClient.connect(url, {
 });
 
 //place the value below with the Telegram token you receive from @BotFather
-const token = '<insert your key>'; //don't worry the key is not valid
+const token = '<your-key>'; //don't worry the key is not valid
 
 //bot declarations
 const bot = new TelegramBot(token, {
@@ -160,9 +162,13 @@ app.post('/orders', function (req, res) {
   res.send(200)
 });
 app.put('/orders', function (req, res) {
-  const mongoid = req._id;
-  orders.updateOrder(req,mongoid, MongoClient);
+  const obj = req.body
+  console.log(obj)
+  const mongoid = obj._id;
+  orders.updateOrder(obj,mongoid, MongoClient);
+       
   res.send(200)
+  console.log("Ordine aggiornato")
 });
 
 app.get('/orders', function (req, res) {
@@ -180,6 +186,12 @@ app.get('/orders', function (req, res) {
 app.post('/sendmessage', function (req, res) {
 bot.sendMessage(req.chatid, req.message)
 res.send(200);
+});
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  next();
 });
 
 app.listen(5000, function () {
