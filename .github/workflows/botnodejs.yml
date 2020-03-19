@@ -27,7 +27,7 @@ jobs:
       env:
         CI: true
     - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v2-preview
       with:
         # Artifact name
         name: botnodejs-${{github.run_id}}
