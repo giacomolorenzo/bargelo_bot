@@ -65,25 +65,7 @@ function updateOrder(jsonobj,mongoid, MongoClient,resRest) {
 @param chatId (telegram chatId)
 */
 function listOrder(bot, chatId, MongoClient) {
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("newdb");
-    console.log(chatId);
-    let query = {
-      chatid: chatId + ""
-    }
-    dbo.collection("orders").find(query).toArray(function (err, result) {
-      if (err) throw err;
-      db.close();
-      result.forEach(function (element, index) {
-        bot.sendMessage(chatId, "ordine n° " + index + " : " + element.message);
-      });
-
-    });
-  });
+  MongoClient.findOrders(bot,chatId);
 }
 /*Rest Order List called by /orders
 @param bot (telegram bot object to send response messages)
@@ -111,28 +93,9 @@ function restListOrder(res, MongoClient) {
 @param bot (telegram bot object to send response messages)
 @param chatId (telegram chatId)
 */
-async function findOrdernumber(chatid, MongoClient) {
+async function findOrdernumber(chatid, mongoClient) {
   return promise = new Promise(function (resolve, reject) {
-    MongoClient.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    }, function (err, db) {
-      if (err) throw err;
-      var dbo = db.db("newdb");
-      dbo.collection("orders").find({chatid: chatid.toString()}).sort({ordernumber:-1}).limit(1).toArray(function (err, result) {
-        if (err) throw err;
-        db.close();
-        const resultResponse = result;
-        console.log("Debug findOrdernumber "+ resultResponse);
-        if (resultResponse != undefined && resultResponse != null && resultResponse != "") {
-          console.log("order if")
-          resolve(parseInt(resultResponse[0].ordernumber) + 1);
-        } else {
-          resolve(0);
-        }
-      });
-
-    });
+    resolve(mongoClient.findByChatid(chatid));
   });
 }
 

@@ -10,29 +10,15 @@ global.url = "mongodb://localhost:27017/newdb";
   
 
 // A Client to MongoDB
-var MongoClient = require('mongodb').MongoClient;
+var MongoClient = require('./modules/mongo')
 // order modules
 var orders = require('./modules/orders.js');
 // user modules
 var users = require('./modules/users');
 
 
-// make client connect to mongo service
-MongoClient.connect(url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}, function (err, db) { //here db is the client obj
-  if (err) throw err;
-  var dbase = db.db("newdb"); //here
-  dbase.createCollection("orders", function (err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-    db.close(); //close method has also been moved to client obj
-  });
-});
-
 //place the value below with the Telegram token you receive from @BotFather
-const token = '<your-key>'; //don't worry the key is not valid
+const token = '<insert your key>'; //don't worry the key is not valid
 
 //bot declarations
 const bot = new TelegramBot(token, {
@@ -156,18 +142,20 @@ bot.onText(/\/menu/, (msg, match) => {
   bot.sendPhoto(msg.chat.id, 'images/pasto.jpeg')
 });
 
-app.use('/', express.static(__dirname + '/statichtml'));
+
+
 app.post('/orders', function (req, res) {
   orders.insertOrder(req, MongoClient);
   res.send(200)
 });
+
 app.put('/orders', function (req, res) {
   const obj = req.body
   console.log(obj)
   const mongoid = obj._id;
-  orders.updateOrder(obj,mongoid, MongoClient);
+  orders.updateOrder(obj,mongoid, MongoClient,res);
        
-  res.send(200)
+ 
   console.log("Ordine aggiornato")
 });
 
