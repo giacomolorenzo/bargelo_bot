@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm run build --if-present
+    - run: npm install 
       env:
         CI: true
     - name: Upload artifact
@@ -32,4 +32,4 @@ jobs:
         # Artifact name
         name: botnodejs-${{github.run_id}}
     # Directory containing files to upload
-        path: build
+        path: "*"
