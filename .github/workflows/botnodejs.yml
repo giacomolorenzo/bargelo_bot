@@ -32,4 +32,4 @@ jobs:
         # Artifact name
         name: botnodejs-${{github.run_id}}
     # Directory containing files to upload
-        path: ../*
+        path: ./*
