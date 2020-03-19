@@ -19,7 +19,7 @@ MongoClient.connect(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       }, function (err, db) {
-          resolve( db);
+          resolve(db);
     });
 });
   }
