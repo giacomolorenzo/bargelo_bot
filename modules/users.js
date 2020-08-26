@@ -5,12 +5,7 @@ Insert User
 @param MongoClient client to duplicate istance of mongodb
 */
 function insertUser(jsonobj,MongoClient,bot){
-    MongoClient.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    }, function (err, db) {
-      if (err) throw err;
-  
+    MongoClient.connectToMongo().then(db =>{
       var dbase = db.db("newdb"); //here
       console.log("Switched to " + dbase.databaseName + " database");
       // insert document to 'users' collection using insertOne
@@ -29,11 +24,7 @@ Function to find a user from telegram chatid
 @param MongoClient client to duplicate istance of mongodb
 */
   async function findUserByChatid(chatId,MongoClient){
-    return promise = new Promise(function(resolve, reject){MongoClient.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    }, function (err, db) {
-      if (err) throw err;
+    return promise = new Promise(function(resolve, reject){MongoClient.connectToMongo().then(db =>{
       var dbo = db.db("newdb");
       console.log(chatId);
       let query = {chatid: chatId+"" }

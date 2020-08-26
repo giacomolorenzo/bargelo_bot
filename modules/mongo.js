@@ -1,19 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 // make client connect to mongo service
 
-MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) { //here db is the client obj
-    if (err) throw err;
-    dbase = db.db("newdb"); //here
-    dbase.createCollection("orders", function (err, res) {
-      if (err) throw err;
-      console.log("Collection created!");
-      db.close(); //close method has also been moved to client obj
-    });
-  });
-
   async function connectToMongo() {
     return new Promise (function (resolve, reject) {MongoClient.connect(url, {
         useNewUrlParser: true,
@@ -24,12 +11,12 @@ MongoClient.connect(url, {
 });
   }
 
-  function findByChatid(chatid){
-    connectToMongo().then(db =>{
+  async function findByChatid(chatid){
+    return new Promise (function (resolve, reject) { connectToMongo().then(db =>{
     var dbase = db.db("newdb");
     dbase.collection("orders").find({chatid: chatid.toString()}).sort({ordernumber:-1}).limit(1).toArray(function (err, result) {
         if (err) throw err;
-        dbase.close();
+        db.close();
         const resultResponse = result;
         console.log("Debug findOrdernumber "+ resultResponse);
         if (resultResponse != undefined && resultResponse != null && resultResponse != "") {
@@ -40,7 +27,8 @@ MongoClient.connect(url, {
         }
       });
     });
-  }
+  });
+}
 
 
   function findOrders(bot,chatId){
@@ -62,4 +50,4 @@ MongoClient.connect(url, {
     
   }
 
-  module.exports = {  findOrders, findByChatid};
+  module.exports = {  findOrders, findByChatid,connectToMongo};

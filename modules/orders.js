@@ -12,12 +12,7 @@ Inserimento ordini e salvataggio su mongo
 */
 function insertOrder(jsonobj, MongoClient) {
   console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    // db pointing to newdb
+  MongoClient.connectToMongo().then(db =>{
 
     var dbase = db.db("newdb"); //here
     console.log("Switched to " + dbase.databaseName + " database");
@@ -37,13 +32,7 @@ function insertOrder(jsonobj, MongoClient) {
 
 function updateOrder(jsonobj,mongoid, MongoClient,resRest) {
   console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
-    // db pointing to newdb
-
+  MongoClient.connectToMongo().then(db =>{
     var dbase = db.db("newdb"); //here
     console.log("Switched to " + dbase.databaseName + " database");
     // find order number for single user 
@@ -72,11 +61,7 @@ function listOrder(bot, chatId, MongoClient) {
 @param chatId (telegram chatId)
 */
 function restListOrder(res, MongoClient) {
-  MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, function (err, db) {
-    if (err) throw err;
+  MongoClient.connectToMongo().then(db =>{
     var dbo = db.db("newdb");
     dbo.collection("orders").find({}).toArray(function (err, result) {
       if (err) throw err;

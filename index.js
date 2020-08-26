@@ -18,7 +18,7 @@ var users = require('./modules/users');
 
 
 //place the value below with the Telegram token you receive from @BotFather
-const token = '<insert your key>'; //don't worry the key is not valid
+const token = '1090954946:AAEe5xf86-lv5nUBTl0WPj_o30b1bC9PFEA'; //don't worry the key is not valid
 
 //bot declarations
 const bot = new TelegramBot(token, {
@@ -54,7 +54,7 @@ bot.onText(/\/order (.+)/, (msg, match) => {
        }
        console.log("Debug Ordine: "+JSON.stringify(jsonobj));
        try {
-         orders.insertOrder(jsonobj, MongoClient);
+         orders.insertOrder(jsonobj);
        } catch (e) {
          console.log("Error", e.stack);
          console.log("Error", e.name);
