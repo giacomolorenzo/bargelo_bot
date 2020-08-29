@@ -12,7 +12,7 @@ Inserimento ordini e salvataggio su mongo
 */
 function insertOrder(jsonobj, MongoClient) {
   console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
-  MongoClient.connectToMongo().then(db =>{
+  MongoClient.connectToMongo().then(db => {
 
     var dbase = db.db("newdb"); //here
     console.log("Switched to " + dbase.databaseName + " database");
@@ -30,20 +30,24 @@ function insertOrder(jsonobj, MongoClient) {
   });
 }
 
-function updateOrder(jsonobj,mongoid, MongoClient,resRest,bot) {
-var ObjectId = require('mongodb').ObjectId; 
+function updateOrder(jsonobj, mongoid, MongoClient, resRest, bot) {
+  var ObjectId = require('mongodb').ObjectId;
 
   console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
-  MongoClient.connectToMongo().then(db =>{
+  MongoClient.connectToMongo().then(db => {
     var dbase = db.db("newdb"); //here
     console.log("Switched to " + dbase.databaseName + " database");
     // find order number for single user 
     delete jsonobj["_id"]
-    var doc = { $set:jsonobj};
+    var doc = {
+      $set: jsonobj
+    };
     try {
-      dbase.collection("orders").updateOne({_id: ObjectId(mongoid)},doc, function (err, res) {
+      dbase.collection("orders").updateOne({
+        _id: ObjectId(mongoid)
+      }, doc, function (err, res) {
         if (err) throw err;
-        console.log("ordine Aggiornato "+ res);
+        console.log("ordine Aggiornato " + res);
         // close the connection to db when you are done with it
         db.close();
         resRest.send(JSON.stringify(res));
@@ -57,7 +61,7 @@ var ObjectId = require('mongodb').ObjectId;
       console.log("Error", e.message);
     }
     // insert document to 'users' collection using insertOne
-    
+
   });
 }
 /*Order List
@@ -65,14 +69,14 @@ var ObjectId = require('mongodb').ObjectId;
 @param chatId (telegram chatId)
 */
 function listOrder(bot, chatId, MongoClient) {
-  MongoClient.findOrders(bot,chatId);
+  MongoClient.findOrders(bot, chatId);
 }
 /*Rest Order List called by /orders
 @param bot (telegram bot object to send response messages)
 @param chatId (telegram chatId)
 */
 function restListOrder(res, MongoClient) {
-  MongoClient.connectToMongo().then(db =>{
+  MongoClient.connectToMongo().then(db => {
     var dbo = db.db("newdb");
     dbo.collection("orders").find({}).toArray(function (err, result) {
       if (err) throw err;
@@ -92,9 +96,15 @@ function restListOrder(res, MongoClient) {
 async function findOrdernumber(chatid, mongoClient) {
   return promise = new Promise(function (resolve, reject) {
     let order = mongoClient.findByChatid(chatid);
-    console.log("dindOrdernumber - "+JSON.stringify(order));
+    console.log("dindOrdernumber - " + JSON.stringify(order));
     resolve(mongoClient.findByChatid(chatid));
   });
 }
 
-module.exports = {  insertOrder, updateOrder, listOrder,  restListOrder,  findOrdernumber};
+module.exports = {
+  insertOrder,
+  updateOrder,
+  listOrder,
+  restListOrder,
+  findOrdernumber
+};
