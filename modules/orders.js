@@ -30,23 +30,34 @@ function insertOrder(jsonobj, MongoClient) {
   });
 }
 
-function updateOrder(jsonobj,mongoid, MongoClient,resRest) {
+function updateOrder(jsonobj,mongoid, MongoClient,resRest,bot) {
+var ObjectId = require('mongodb').ObjectId; 
+
   console.log("Debug insertOrder: " + JSON.stringify(jsonobj));
   MongoClient.connectToMongo().then(db =>{
     var dbase = db.db("newdb"); //here
     console.log("Switched to " + dbase.databaseName + " database");
     // find order number for single user 
+    delete jsonobj["_id"]
+    var doc = { $set:jsonobj};
+    try {
+      dbase.collection("orders").updateOne({_id: ObjectId(mongoid)},doc, function (err, res) {
+        if (err) throw err;
+        console.log("ordine Aggiornato "+ res);
+        // close the connection to db when you are done with it
+        db.close();
+        resRest.send(JSON.stringify(res));
 
-    var doc = jsonobj;
+        bot.sendMessage(jsonobj.chatid, "Il tuo ordine è stato modificato dal gestore fai /orderlist per vederne lo stato");
 
+      });
+    } catch (e) {
+      console.log("Error", e.stack);
+      console.log("Error", e.name);
+      console.log("Error", e.message);
+    }
     // insert document to 'users' collection using insertOne
-    dbase.collection("orders").update({_id: mongoid},doc, function (err, res) {
-      if (err) throw err;
-      console.log("ordine Aggiornato "+ res);
-      // close the connection to db when you are done with it
-      db.close();
-      resRest.send(JSON.stringify(jsonobj));
-    });
+    
   });
 }
 /*Order List
@@ -80,6 +91,8 @@ function restListOrder(res, MongoClient) {
 */
 async function findOrdernumber(chatid, mongoClient) {
   return promise = new Promise(function (resolve, reject) {
+    let order = mongoClient.findByChatid(chatid);
+    console.log("dindOrdernumber - "+JSON.stringify(order));
     resolve(mongoClient.findByChatid(chatid));
   });
 }
