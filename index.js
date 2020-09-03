@@ -1,5 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 fs = require('fs');
+//login
+const jwt = require('jsonwebtoken')
 var express = require('express');
 var app = express();
 const bodyParser = require('body-parser');
@@ -177,6 +179,60 @@ app.post('/sendmessage', function (req, res) {
   bot.sendMessage(req.chatid, req.message)
   res.send(200);
 });
+
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  const user = {
+    name: username
+  }
+  const password = req.body.password
+  if (username && password) {
+    connectToMongo().then(db => {
+      var dbase = db.db("newdb");
+      let doc = {
+        user: username,
+        token: token,
+        expiresIn: 6000 * 6000
+      }
+      dbase.collection("login").findOne({
+        user: username
+      }, function (err, result) {
+        if (result.password != password) {
+          res.send("Password errata!")
+          res.end();
+        }
+        if (err) throw err;
+        console.log(result.name);
+        db.close();
+      });
+    });
+    const accessToken = jwt.sign(user, 'secretKey', {
+      expiresIn: 6000 * 6000
+    }, (err, token) => {
+
+      connectToMongo().then(db => {
+        var dbase = db.db("newdb");
+        let doc = {
+          user: username,
+          token: token,
+          expiresIn: 6000 * 6000
+        }
+        dbase.collection("login").insertOne(doc, function (err, res) {
+          if (err) throw err;
+          console.log("ordine inserito");
+          // close the connection to db when you are done with it
+          db.close();
+        });
+      });
+      res.json({
+        token: token
+      })
+    })
+  } else {
+    res.send('Please enter Username and Password!')
+    res.end();
+  }
+})
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
